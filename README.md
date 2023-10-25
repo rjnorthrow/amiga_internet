@@ -18,11 +18,11 @@ Install ansible and git:
 `sudo apt install -y ansible git`
 
 Fetch the ansible repo from GitHub:
-`git clone https://github.com/rjnorthrow/amiga-internet.git`
+`git clone https://github.com/rjnorthrow/amiga_internet.git`
 
-Change to the `amiga-internet` directory
+Change to the `amiga_internet` directory
 
-`cd amiga-internet`
+`cd amiga_internet`
 
 ## Install the required `rjnorthrow.ppp_amiga` role
 `ansible-galaxy install rjnorthrow.ppp_amiga`
