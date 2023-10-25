@@ -1,0 +1,33 @@
+#
+# Local network
+#
+lan_interface: "{{ interface | default(ansible_default_ipv4.interface) }}"
+lan_ip: "{{ ip | default(ansible_default_ipv4.address) }}"
+lan_network: "{{ network | default(ansible_default_ipv4.network) }}"
+lan_netmask: "{{ netmask | default(ansible_default_ipv4.netmask) }}"
+
+#
+# Options below here probably do not need to be changed
+# -----------------------------------------------------
+#
+# Amiga to Raspberry Pi IP configuration
+#
+ppp_pi_ip: "{{ serial_ip | default('10.168.0.1') }}"
+ppp_amiga_ip: "{{ amiga_ip | default('10.168.0.2') }}"
+
+#
+# Firewall rules
+#
+firewall_rules: {
+  nat_rules: [
+   '-A PREROUTING --in-interface {{ lan_interface }} --protocol tcp --match tcp --dport 356 --jump DNAT --to-destination {{ ppp_amiga_ip }}:356 -m comment --comment="Port forward TCP/356 for Amiga Explorer from the Raspberry Pi to the Amiga"',
+   '-A POSTROUTING --out-interface {{ lan_interface }} --jump MASQUERADE -m comment --comment="Set up NAT to allow the Amiga to talk through the Raspberry Pi"',
+  ],
+  filter_rules: [
+    '-A INPUT -i {{ lan_interface }} -s {{ lan_network }}/{{ lan_netmask }} -m state --state NEW -j ACCEPT -m comment --comment="Allow all traffic from the LAN"',
+    '-A INPUT -i ppp0 -s {{ ppp_amiga_ip }} -m state --state NEW -j ACCEPT -m comment --comment="Allow traffic to this Raspberry Pi from the Amiga"',
+    '-A FORWARD -i ppp0 -o {{ lan_interface }} -j ACCEPT -m comment --comment="Allow traffic from the Amiga to be forwarded through this Raspberry Pi"',
+  ],
+  mangle_rules: [
+  ]
+}

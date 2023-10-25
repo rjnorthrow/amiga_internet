@@ -1,0 +1,14 @@
+---
+#
+# Ansible playbook for installation and configuration of the PPP Amiga bridge
+#
+# @author: Roger North-Row
+# @date:   17/08/2020
+#
+- hosts: localhost
+
+  become: yes
+  connection: local
+
+  roles:
+    - rjnorthrow.ppp_amiga
